@@ -1,0 +1,5 @@
+import pandas as pd
+
+def dropDuplicateEmails(customers: pd.DataFrame) -> pd.DataFrame:
+    #return customers.drop_duplicates('email', keep='first')
+    return customers.groupby('email').head(1)
