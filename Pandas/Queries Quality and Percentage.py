@@ -12,17 +12,15 @@ def queries_stats(queries: pd.DataFrame) -> pd.DataFrame:
     # Gets rows with rating < 3
     poor = output[output["rating"] < 3]
     # Groups by query_name and gets the count of poor queries
-    poor = poor.groupby("query_name")["query_name"].count().reset_index(name="cnt")
-    # Right joins with total, to get all possible query_names
-    poor = poor.merge(total, on="query_name", how="right")
-    # Fills NaN values with 0
-    poor = poor.fillna(0)
+    poor = output[output["rating"] < 3].groupby("query_name").size().reset_index(name="cnt")
+    # Right joins with total, to get all possible query_names, then fills NaN values with 0
+    poor = poor.merge(total, on="query_name", how="right").fillna(0)
     
     # Groups by query_name, aggregates quality to its mean, resets index,
     # then assigns poor_query_percentage to be the poor queries count divided by total queries count,
     # and multiplies the division by 100
     output = output.groupby("query_name").agg({"quality": "mean"}).reset_index().assign(
-        poor_query_percentage=lambda i: (poor.cnt / total.query_total) * 100
+        poor_query_percentage=lambda i: (poor.cnt / poor.query_total) * 100
     )
 
     # Returns output rounded by 2 decimal places
