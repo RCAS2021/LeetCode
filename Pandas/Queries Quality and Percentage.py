@@ -9,8 +9,6 @@ def queries_stats(queries: pd.DataFrame) -> pd.DataFrame:
     # Groupys by query_name and aggregates query_total to be the rating count and resets index
     total = output.groupby("query_name").agg(query_total=('rating', 'count')).reset_index()
 
-    # Gets rows with rating < 3
-    poor = output[output["rating"] < 3]
     # Groups by query_name and gets the count of poor queries
     poor = output[output["rating"] < 3].groupby("query_name").size().reset_index(name="cnt")
     # Right joins with total, to get all possible query_names, then fills NaN values with 0
